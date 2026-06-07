@@ -1,0 +1,157 @@
+[
+    {
+        "handle": "tofu",
+        "nom": "Tofu extra-ferme",
+        "section": "vegetarien-vegetalien"
+    },
+    {
+        "handle": "fecule-mais",
+        "nom": "Fécule de maïs",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "huile-vegetale",
+        "nom": "Huile végétale",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "riz",
+        "nom": "Riz",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "vinaigre-riz",
+        "nom": "Vinaigre de riz",
+        "section": "cuisine-du-monde"
+    },
+    {
+        "handle": "sauce-soya",
+        "nom": "Sauce soya",
+        "section": "cuisine-du-monde"
+    },
+    {
+        "handle": "sauce-hoisin",
+        "nom": "Sauce hoisin",
+        "section": "cuisine-du-monde"
+    },
+    {
+        "handle": "sambal-oelek",
+        "nom": "Sambal oelek",
+        "section": "cuisine-du-monde"
+    },
+    {
+        "handle": "sriracha",
+        "nom": "Sriracha",
+        "section": "cuisine-du-monde"
+    },
+    {
+        "handle": "huile-sesame",
+        "nom": "Huile de sésame",
+        "section": "cuisine-du-monde"
+    },
+    {
+        "handle": "pains-mini-burger",
+        "nom": "Pains mini burger",
+        "section": "pains-patisseries"
+    },
+    {
+        "handle": "poitrine-poulet-fume",
+        "nom": "Poitrine de poulet fumée",
+        "section": "charcuteries-plats-prepares"
+    },
+    {
+        "handle": "beurre",
+        "nom": "Beurre",
+        "section": "produits-laitiers-oeufs"
+    },
+    {
+        "handle": "laitue",
+        "nom": "Laitue",
+        "section": "fruits-legumes"
+    },
+    {
+        "handle": "mozzarella",
+        "nom": "Mozzarella",
+        "section": "produits-laitiers-oeufs"
+    },
+    {
+        "handle": "mayo",
+        "nom": "Mayonnaise",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "tortillas",
+        "nom": "Tortillas",
+        "section": "pains-patisseries"
+    },
+    {
+        "handle": "poitrine-poulet",
+        "nom": "Poitrine de Poulet",
+        "section": "viandes-volailles"
+    },
+    {
+        "handle": "poudre-ail",
+        "nom": "Poudre d'ail",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "poudre-oignon",
+        "nom": "Poudre d'oignon",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "poudre-chili",
+        "nom": "Poudre de chili",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "paprika",
+        "nom": "Paprika",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "cumin",
+        "nom": "Cumin",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "sel",
+        "nom": "Sel",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "poivre",
+        "nom": "Poivre",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "poivron",
+        "nom": "Poivron",
+        "section": "fruits-legumes"
+    },
+    {
+        "handle": "creme-sure",
+        "nom": "Crème sure",
+        "section": "produits-laitiers-oeufs"
+    },
+    {
+        "handle": "salsa",
+        "nom": "Salsa",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "oignon",
+        "nom": "Oignon",
+        "section": "fruits-legumes"
+    },
+    {
+        "handle": "gnocchis",
+        "nom": "Gnocchis",
+        "section": "garde-manger"
+    },
+    {
+        "handle": "sauce-marinara",
+        "nom": "Sauce marinara",
+        "section": "garde-manger"
+    }
+]

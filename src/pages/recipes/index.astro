@@ -1,0 +1,60 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import recipes from '../../data/recipes.json';
+---
+
+<Layout>
+    <div class="nav-links">
+        <a href="/">← Retour à l'accueil</a>
+    </div>
+    <h1>Recipes</h1>
+
+    <a href="/recipes/add">Add</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Recettes</th>
+                <th>Inspirations</th>
+            </tr>
+        </thead>
+        <tbody id="recipes-tbody">
+            {recipes.map((recipe) => (
+                <tr>
+                    <td>
+                        <a href={`/recipes/view?handle=${recipe.handle}`}>{recipe.nom}</a>
+                    </td>
+                    <td>
+                        {recipe.url ? <a href={recipe.url} target="_blank">Étapes à suivre</a> : '-'}
+                    </td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+</Layout>
+
+<script>
+    const tbody = document.querySelector("#recipes-tbody");
+
+    if (tbody) {
+        const customRecipes = JSON.parse(localStorage.getItem("custom_recipes") || "[]");
+        let customRowsHtml = "";
+        
+        customRecipes.forEach((recipe: any) => {
+            const urlLink = recipe.url 
+                ? `<a href="${recipe.url}" target="_blank">Étapes à suivre</a>` 
+                : '-';
+
+            customRowsHtml += `
+                <tr class="custom-recipe-row">
+                    <td>
+                        <a href="/recipes/view?handle=${recipe.handle}">⭐ ${recipe.nom}</a>
+                    </td>
+                    <td>${urlLink}</td>
+                </tr>
+            `;
+        });
+
+        tbody.insertAdjacentHTML("afterbegin", customRowsHtml);
+    }
+</script>

@@ -1,0 +1,34 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import recipes from '../../data/recipes.json';
+
+export const getStaticPaths = (() => {
+    
+    return recipes.map(recipe => ({
+        params: {
+            handle: recipe.handle
+        }
+    }));
+}) satisfies GetStaticPaths;
+
+const { handle } = Astro.params;
+
+const recipe = recipes.find(recipe => (
+    recipe.handle === handle
+))
+---
+
+<Layout>
+    {recipe && (
+    <>
+        <h1>{recipe.nom}</h1>
+        <p>Ingrédients</p>
+        <ul>
+            {recipe.ingredients.map((ingredient) => (
+                <li>{ingredient}</li>
+            ))}
+        </ul>
+    </>
+    )}
+</Layout>

@@ -1,0 +1,95 @@
+[
+    {
+        "id": 1,
+        "nom": "Tofu général tao",
+        "handle": "tofu-general-tao",
+        "ingredients": [
+            "tofu",
+            "fecule-mais",
+            "huile-vegetale",
+            "riz",
+            "vinaigre-riz",
+            "sauce-soya",
+            "sauce-hoisin",
+            "sambal-oelek",
+            "sriracha",
+            "huile-sesame"
+        ],
+        "url": "https://www.ricardocuisine.com/recettes/5675-tofu-general-tao-le-meilleur"
+    },
+    {
+        "id": 2,
+        "nom": "Fajitas au poulet",
+        "handle": "fajitas-au-poulet",
+        "ingredients": [
+            "tortillas",
+            "oitrine-poulet",
+            "huile-vegetale",
+            "poudre-ail",
+            "poudre-oignon",
+            "poudre-chili",
+            "paprika",
+            "cumin",
+            "sel",
+            "poivre",
+            "poivron",
+            "creme-sure",
+            "salsa",
+            "laitue",
+            "oignon"
+        ],
+        "url": ""
+    },
+    {
+        "id": 3,
+        "nom": "Pâtes aux saucisses",
+        "handle": "pates-aux-saucisses",
+        "ingredients": [],
+        "url": ""
+    },
+    {
+        "id": 4,
+        "nom": "Macaroni chinois",
+        "handle": "macaroni-chinois",
+        "ingredients": [],
+        "url": ""
+    },
+    {
+        "id": 5,
+        "nom": "Quesadillas au boeuf",
+        "handle": "quesadillas-au-boeuf",
+        "ingredients": [],
+        "url": ""
+    },
+    {
+        "id": 6,
+        "nom": "Riz frit",
+        "handle": "riz-frit",
+        "ingredients": [],
+        "url": ""
+    },
+    {
+        "id": 7,
+        "nom": "Mini burgers au poulet fumé",
+        "handle": "mini-burgers-au-poulet-fume",
+        "ingredients": [
+            "pains-mini-burger",
+            "poitrine-poulet-fume",
+            "beurre",
+            "laitue",
+            "mozzarella",
+            "mayo"
+        ],
+        "url": ""
+    },
+    {
+        "id": 8,
+        "nom": "Gnocchis rôtis au air fryer avec marinara",
+        "handle": "gnocchis-rotis-marinara",
+        "ingredients": [
+            "gnocchis",
+            "sauce-marinara"
+        ],
+        "url": ""
+    }
+]

@@ -1,0 +1,54 @@
+[
+    {
+        "handle": "fruits-legumes",
+        "nom": "Fruits et légumes"
+    },
+    {
+        "handle": "produits-laitiers-oeufs",
+        "nom": "Produits laitiers et œufs"
+    },
+    {
+        "handle": "garde-manger",
+        "nom": "Garde-Manger"
+    },
+    {
+        "handle": "boissons",
+        "nom": "Boissons"
+    },
+    {
+        "handle": "bieres-vins",
+        "nom": "Bières et vins"
+    },
+    {
+        "handle": "viandes-volailles",
+        "nom": "Viandes et volailles"
+    },
+    {
+        "handle": "vegetarien-vegetalien",
+        "nom": "Aliments végétariens et végétaliens"
+    },
+    {
+        "handle": "collations",
+        "nom": "Collations"
+    },
+    {
+        "handle": "produits-surgeles",
+        "nom": "Produits surgelés"
+    },
+    {
+        "handle": "pains-patisseries",
+        "nom": "Pains et pâtisseries"
+    },
+    {
+        "handle": "poissons-fruits-mer",
+        "nom": "Poissons et fruits de mer"
+    },
+    {
+        "handle": "cuisine-du-monde",
+        "nom": "Cuisine du monde"
+    },
+    {
+        "handle": "charcuteries-plats-prepares",
+        "nom": "Charcuteries et plats préparés"
+    }
+]

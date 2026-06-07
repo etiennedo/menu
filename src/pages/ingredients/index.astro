@@ -1,0 +1,128 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ingredients from '../../data/ingredients.json';
+import sections from '../../data/sections.json';
+---
+
+<Layout>
+    <div class="nav-links">
+        <a href="/">← Retour à l'accueil</a>
+    </div>
+    <h1>Ingrédients par rayon</h1>
+
+    <a href="/ingredients/add" class="btn-add">Ajouter un ingrédient</a>
+
+    {sections.map((section) => {
+        // Filtrer les ingrédients statiques (JSON) qui appartiennent à cette section
+        const sectionIngredients = ingredients.filter(ing => ing.section === section.handle);
+
+        return (
+            <div class="section-container" data-section={section.handle}>
+                <h2>{section.nom}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom de l'ingrédient</th>
+                        </tr>
+                    </thead>
+                    <tbody id={`tbody-${section.handle}`}>
+                        {sectionIngredients.map((ingredient) => (
+                            <tr>
+                                <td>
+                                    <a href={`/ingredients/view?handle=${ingredient.handle}`}>
+                                        {ingredient.nom}
+                                    </a>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        );
+    })}
+</Layout>
+
+<style is:global>
+    .nav-links {
+        margin-bottom: 20px;
+    }
+    .btn-add {
+        display: inline-block;
+        background-color: #4a90e2;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin-bottom: 30px;
+    }
+    .btn-add:hover {
+        background-color: #357abd;
+    }
+    .section-container {
+        margin-bottom: 40px;
+    }
+    .section-container h2 {
+        color: #333;
+        border-bottom: 2px solid #ecf0f1;
+        padding-bottom: 8px;
+        margin-bottom: 10px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f8f9fa;
+        color: #555;
+        font-size: 0.9rem;
+    }
+    .custom-ingredient-row {
+        background-color: #fdfbf7; /* Teinte légère pour différencier le custom */
+    }
+    /* Classe utilitaire pour masquer les rayons complètement vides */
+    .section-empty {
+        display: none;
+    }
+</style>
+
+<script>
+    // 1. Récupérer les ingrédients créés par l'utilisateur dans le localStorage
+    const customIngredients = JSON.parse(localStorage.getItem("custom_ingredients") || "[]");
+    
+    customIngredients.forEach((ingredient: any) => {
+        const sectionHandle = ingredient.section;
+        
+        // 2. Trouver le bon tableau grâce au handle de la section
+        const tbody = document.querySelector(`#tbody-${sectionHandle}`);
+        
+        if (tbody) {
+            const ingredientId = ingredient.id || ingredient.handle;
+            
+            // 3. Construire la ligne HTML
+            const rowHtml = `
+                <tr class="custom-ingredient-row">
+                    <td>
+                        <a href="/ingredients/view?handle=${ingredientId}">⭐ ${ingredient.nom}</a>
+                    </td>
+                </tr>
+            `;
+            
+            // 4. L'insérer au début du tableau de la bonne section
+            tbody.insertAdjacentHTML("afterbegin", rowHtml);
+        }
+    });
+
+    // Optionnel & Élégant : Masquer les rayons qui n'ont aucun ingrédient (ni JSON, ni LocalStorage)
+    document.querySelectorAll(".section-container").forEach((container) => {
+        const tbody = container.querySelector("tbody");
+        // Si le tbody ne contient aucune ligne (tr), on cache toute la section
+        if (tbody && tbody.children.length === 0) {
+            container.classList.add("section-empty");
+        }
+    });
+</script>

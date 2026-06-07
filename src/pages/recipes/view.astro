@@ -1,0 +1,124 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import baseRecipes from '../../data/recipes.json';
+---
+
+<Layout>
+    <div class="nav-links">
+        <a href="/recipes">← Retour aux recettes</a>
+    </div>
+
+    <div id="recipe-content" class="hidden">
+        <h1 id="recipe-title">Chargement...</h1>
+        
+        <p id="recipe-inspiration-container"></p>
+
+        <h2>Ingrédients</h2>
+        <ul id="recipe-ingredients-list"></ul>
+
+        <div id="custom-actions" class="hidden">
+            <a id="edit-btn" class="btn-edit">Modifier la recette</a>
+            <button id="delete-btn" class="btn-delete">Supprimer la recette</button>
+        </div>
+    </div>
+
+    <div id="error-content" class="hidden">
+        <h1>Recette introuvable 😭</h1>
+        <p>La recette demandée n'existe pas ou a été supprimée.</p>
+    </div>
+</Layout>
+
+<style is:global>
+    .hidden { display: none; }
+    .nav-links { margin-bottom: 20px; }
+    
+    /* Un peu de style pour les boutons */
+    #custom-actions {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+    .btn-edit {
+        display: inline-block;
+        background-color: #4a90e2;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    .btn-delete {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-edit:hover { background-color: #357abd; }
+    .btn-delete:hover { background-color: #cc3333; }
+</style>
+
+<script define:vars={{ baseRecipes }}>
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentHandle = urlParams.get('handle');
+
+    const recipeContentDiv = document.querySelector("#recipe-content");
+    const errorContentDiv = document.querySelector("#error-content");
+
+    if (!currentHandle) {
+        errorContentDiv?.classList.remove("hidden");
+    } else {
+        const customRecipes = JSON.parse(localStorage.getItem("custom_recipes") || "[]");
+        
+        // On vérifie si la recette appartient au localStorage
+        const isCustom = customRecipes.some(r => r.handle === currentHandle);
+        const recipe = isCustom 
+            ? customRecipes.find(r => r.handle === currentHandle) 
+            : baseRecipes.find(r => r.handle === currentHandle);
+
+        if (recipe) {
+            // 1. Remplir le titre et les ingrédients
+            const titleEl = document.querySelector("#recipe-title");
+            const ingredientsUl = document.querySelector("#recipe-ingredients-list");
+            if (titleEl) titleEl.textContent = recipe.nom;
+            if (ingredientsUl && recipe.ingredients) {
+                ingredientsUl.innerHTML = recipe.ingredients.map(ing => `<li>${ing}</li>`).join('');
+            }
+
+            // 2. MODIFICATION : Gestion du mot "Inspiration" comme lien direct
+            const inspiContainer = document.querySelector("#recipe-inspiration-container");
+            if (inspiContainer) {
+                if (recipe.url) {
+                    inspiContainer.innerHTML = `<a href="${recipe.url}" target="_blank" style="font-weight: bold; color: #4a90e2;">Inspiration (Lien externe)</a>`;
+                } else {
+                    inspiContainer.innerHTML = `<em>Recette originale (aucune inspiration externe)</em>`;
+                }
+            }
+
+            // 3. NOUVEAUTÉ : Si c'est une recette utilisateur, on active les boutons Edit/Delete
+            if (isCustom) {
+                const actionsDiv = document.querySelector("#custom-actions");
+                actionsDiv?.classList.remove("hidden");
+
+                // Configurer le lien de modification vers /add avec le paramètre ?edit=
+                const editBtn = document.querySelector("#edit-btn");
+                if (editBtn) editBtn.href = `/recipes/add?edit=${recipe.handle}`;
+
+                // Configurer le bouton de suppression
+                const deleteBtn = document.querySelector("#delete-btn");
+                deleteBtn?.addEventListener("click", () => {
+                    if (confirm(`Es-tu sûr de vouloir supprimer la recette "${recipe.nom}" ?`)) {
+                        const updatedRecipes = customRecipes.filter(r => r.handle !== currentHandle);
+                        localStorage.setItem("custom_recipes", JSON.stringify(updatedRecipes));
+                        window.location.href = "/recipes"; // Redirection vers la liste
+                    }
+                });
+            }
+
+            recipeContentDiv?.classList.remove("hidden");
+        } else {
+            errorContentDiv?.classList.remove("hidden");
+        }
+    }
+</script>

@@ -1,0 +1,250 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import baseIngredients from '../../data/ingredients.json';
+---
+
+<Layout>
+    <div class="nav-links">
+        <a href="/recipes">← Retour aux recettes</a>
+    </div>
+    <h1 id="page-title">Nouvelle recette</h1>
+
+    <form id="recipe-form">
+        <label for="nom">Nom</label>
+        <input id="nom" name="nom" required autocomplete="off" />
+
+        <div class="handle-zone">
+            <span class="handle-label">Handle généré automatiquement :</span>
+            <code id="handle-preview">en attente du nom...</code>
+        </div>
+
+        <label for="url">URL d'une recette en inspi</label>
+        <input id="url" name="url" type="url" />
+
+        <h2>Ingrédients</h2>
+
+        <datalist id="ingredients-presets">
+            {baseIngredients.map((ingredient) => (
+                <option value={ingredient.nom} />
+            ))}
+        </datalist>
+
+        <div id="ingredients-list">
+            <button type="button" class="add-ingredient">+</button>
+            <button type="button" class="remove-ingredient">-</button>
+            
+            <div class="ingredient-row">
+                <input
+                    type="text"
+                    class="ingredient-input"
+                    placeholder="Sélectionnez un ingrédient"
+                    name="ingredients"
+                    list="ingredients-presets"
+                    required
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+
+        <button type="submit" id="submit-btn">Créer la recette</button>
+    </form>
+
+    <pre id="output"></pre>
+</Layout>
+
+<style is:global>
+    .handle-zone { margin: 10px 0 20px 0; font-size: 0.9rem; }
+    .handle-label { color: #666; display: block; margin-bottom: 4px; }
+    #handle-preview { background-color: #f1f1f1; padding: 4px 8px; border-radius: 4px; color: #333; font-family: monospace; }
+    .ingredient-input.is-invalid { border: 2px solid #ff4d4d; background-color: #ffe6e6; }
+</style>
+
+<script>
+    const form = document.querySelector("#recipe-form") as HTMLFormElement;
+    const nomInput = document.querySelector("#nom") as HTMLInputElement;
+    const urlInput = document.querySelector("#url") as HTMLInputElement;
+    const handlePreview = document.querySelector("#handle-preview") as HTMLElement;
+    const ingredientsList = document.querySelector("#ingredients-list");
+    const datalist = document.querySelector("#ingredients-presets");
+    const output = document.querySelector("#output");
+    const pageTitle = document.querySelector("#page-title");
+    const submitBtn = document.querySelector("#submit-btn");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const editHandle = urlParams.get('edit');
+
+    const newIngredientsRow = `
+        <div class="ingredient-row">
+            <input
+                type="text"
+                class="ingredient-input"
+                placeholder="Sélectionnez un ingrédient"
+                name="ingredients"
+                list="ingredients-presets"
+                required
+                autocomplete="off"
+            >
+        </div>
+    `;
+
+    function slugify(text: string): string {
+        return text.toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+    }
+
+    function getValidIngredientsList(): string[] {
+        if (!datalist) return [];
+        return Array.from(datalist.querySelectorAll("option")).map(opt => opt.value);
+    }
+
+    // La validation prendra automatiquement en compte les customs injectés dans le datalist
+    function validateIngredientInput(input: HTMLInputElement) {
+        const validIngredients = getValidIngredientsList();
+        const value = input.value.trim();
+        if (value === "") {
+            input.setCustomValidity("");
+            input.classList.remove("is-invalid");
+        } else if (!validIngredients.includes(value)) {
+            input.setCustomValidity("Cet ingrédient n'existe pas. Veuillez le sélectionner dans la liste.");
+            input.classList.add("is-invalid");
+        } else {
+            input.setCustomValidity("");
+            input.classList.remove("is-invalid");
+        }
+    }
+
+    function checkAndLoadEditMode() {
+        if (!editHandle) return;
+
+        const existingCustomRecipes = JSON.parse(localStorage.getItem("custom_recipes") || "[]");
+        const recipeToEdit = existingCustomRecipes.find((r: any) => r.handle === editHandle);
+
+        if (recipeToEdit) {
+            if (pageTitle) pageTitle.textContent = `Modifier : ${recipeToEdit.nom}`;
+            if (submitBtn) submitBtn.textContent = "Sauvegarder les modifications";
+            if (nomInput) nomInput.value = recipeToEdit.nom;
+            if (urlInput && recipeToEdit.url) urlInput.value = recipeToEdit.url;
+            if (handlePreview) handlePreview.textContent = recipeToEdit.handle;
+
+            if (recipeToEdit.ingredients && recipeToEdit.ingredients.length > 0) {
+                document.querySelectorAll(".ingredient-row").forEach(el => el.remove());
+
+                recipeToEdit.ingredients.forEach((ing: string) => {
+                    const rowHtml = `
+                        <div class="ingredient-row">
+                            <input
+                                type="text"
+                                class="ingredient-input"
+                                placeholder="Sélectionnez un ingrédient"
+                                name="ingredients"
+                                list="ingredients-presets"
+                                value="${ing}"
+                                required
+                                autocomplete="off"
+                            >
+                        </div>
+                    `;
+                    ingredientsList?.insertAdjacentHTML("beforeend", rowHtml);
+                });
+            }
+        }
+    }
+
+    ingredientsList?.addEventListener("change", (event) => {
+        const target = event.target as HTMLInputElement;
+        if (target.classList.contains("ingredient-input")) validateIngredientInput(target);
+    });
+    ingredientsList?.addEventListener("input", (event) => {
+        const target = event.target as HTMLInputElement;
+        if (target.classList.contains("ingredient-input")) target.classList.remove("is-invalid");
+    });
+
+    nomInput?.addEventListener("input", () => {
+        const value = nomInput.value;
+        handlePreview.textContent = value.trim() === "" ? "en attente du nom..." : slugify(value);
+    });
+
+    // --- MODIFICATION ICI : CHARGEMENT DEPUIS LES INGRÉDIENTS CUSTOMS ---
+    function loadCustomIngredientsIntoDatalist() {
+        if (!datalist) return;
+        
+        // On récupère le tableau d'ingrédients customs créés par l'utilisateur
+        const customIngredients = JSON.parse(localStorage.getItem("custom_ingredients") || "[]");
+        
+        // Liste de contrôle pour éviter les doublons avec le JSON de base
+        const baseIngredientsRendered = Array.from(datalist.querySelectorAll("option")).map(opt => opt.value);
+
+        customIngredients.forEach((ingredient: any) => {
+            // L'ingrédient custom étant un objet { id, nom, section }, on valide sa propriété .nom
+            if (ingredient && ingredient.nom && !baseIngredientsRendered.includes(ingredient.nom)) {
+                const option = document.createElement("option");
+                option.value = ingredient.nom;
+                datalist.appendChild(option);
+                baseIngredientsRendered.push(ingredient.nom); // Évite les doublons internes
+            }
+        });
+    }
+
+    // Initialisations au chargement
+    loadCustomIngredientsIntoDatalist();
+    checkAndLoadEditMode();
+
+    ingredientsList?.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        const rows = document.querySelectorAll(".ingredient-row");
+        if (target.classList.contains("add-ingredient")) {
+            ingredientsList?.insertAdjacentHTML("beforeend", newIngredientsRow);
+        }
+        if (target.classList.contains("remove-ingredient") && rows.length > 1) {
+            rows[rows.length - 1].remove();
+        }
+    });
+
+    form?.addEventListener("submit", (event) => {
+        const inputs = document.querySelectorAll(".ingredient-input") as NodeListOf<HTMLInputElement>;
+        let isAllValid = true;
+
+        inputs.forEach(input => {
+            validateIngredientInput(input);
+            if (!input.checkValidity()) {
+                isAllValid = false;
+                input.classList.add("is-invalid");
+            }
+        });
+
+        if (!isAllValid) {
+            event.preventDefault();
+            form.reportValidity();
+            return;
+        }
+
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const ingredients = formData.getAll("ingredients").map(i => i.toString().trim()).filter(i => i !== "");
+        const recipeName = formData.get("nom")?.toString() || "";
+        const newHandle = slugify(recipeName);
+
+        const updatedRecipe = {
+            nom: recipeName,
+            handle: newHandle, 
+            url: formData.get("url")?.toString(),
+            ingredients: ingredients
+        };
+
+        let existingCustomRecipes = JSON.parse(localStorage.getItem("custom_recipes") || "[]");
+
+        if (editHandle) {
+            const index = existingCustomRecipes.findIndex((r: any) => r.handle === editHandle);
+            if (index !== -1) {
+                existingCustomRecipes[index] = updatedRecipe;
+            } else {
+                existingCustomRecipes.push(updatedRecipe);
+            }
+        } else {
+            existingCustomRecipes.push(updatedRecipe);
+        }
+
+        localStorage.setItem("custom_recipes", JSON.stringify(existingCustomRecipes));
+        window.location.href = `/recipes/view?handle=${newHandle}`;
+    });
+</script>

@@ -1,0 +1,133 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import baseIngredients from '../../data/ingredients.json';
+import sections from '../../data/sections.json';
+---
+
+<Layout>
+    <div class="nav-links">
+        <a href="/ingredients">← Retour aux ingrédients</a>
+    </div>
+
+    <div id="ingredient-content" class="hidden">
+        <h1 id="ingredient-title">Chargement...</h1>
+        
+        <p class="section-info">
+            <strong>Section :</strong> 
+            <span id="ingredient-section-name">Chargement...</span>
+        </p>
+
+        <div id="custom-actions" class="hidden">
+            <a id="edit-btn" class="btn-edit">Modifier l'ingrédient</a>
+            <button id="delete-btn" class="btn-delete">Supprimer l'ingrédient</button>
+        </div>
+    </div>
+
+    <div id="error-content" class="hidden">
+        <h1>Ingrédient introuvable 😭</h1>
+        <p>L'ingrédient demandé n'existe pas ou a été supprimé.</p>
+    </div>
+</Layout>
+
+<style is:global>
+    .hidden { display: none; }
+    .nav-links { margin-bottom: 20px; }
+    
+    .section-info {
+        font-size: 1.1rem;
+        margin-top: 15px;
+        color: #444;
+    }
+    
+    #ingredient-section-name {
+        background-color: #f0f4f8;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    #custom-actions {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+    .btn-edit {
+        display: inline-block;
+        background-color: #4a90e2;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    .btn-delete {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-edit:hover { background-color: #357abd; }
+    .btn-delete:hover { background-color: #cc3333; }
+</style>
+
+<script define:vars={{ baseIngredients, sections }}>
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentHandle = urlParams.get('handle');
+
+    const ingredientContentDiv = document.querySelector("#ingredient-content");
+    const errorContentDiv = document.querySelector("#error-content");
+
+    if (!currentHandle) {
+        errorContentDiv?.classList.remove("hidden");
+    } else {
+        const customIngredients = JSON.parse(localStorage.getItem("custom_ingredients") || "[]");
+        
+        // 1. Vérifier si l'ingrédient appartient au localStorage (par ID ou handle)
+        const isCustom = customIngredients.some(i => i.id === currentHandle || i.handle === currentHandle);
+        const ingredient = isCustom 
+            ? customIngredients.find(i => i.id === currentHandle || i.handle === currentHandle) 
+            : baseIngredients.find(i => i.handle === currentHandle);
+
+        if (ingredient) {
+            // 2. Remplir le titre avec le nom de l'ingrédient
+            const titleEl = document.querySelector("#ingredient-title");
+            if (titleEl) titleEl.textContent = ingredient.nom;
+
+            // 3. Trouver le nom de la section au propre grâce au fichier sections.json
+            const sectionNameEl = document.querySelector("#ingredient-section-name");
+            if (sectionNameEl) {
+                const foundSection = sections.find(s => s.handle === ingredient.section);
+                sectionNameEl.textContent = foundSection ? foundSection.nom : (ingredient.section || 'Non classé');
+            }
+
+            // 4. Si c'est un ingrédient utilisateur, on affiche et configure les actions Edit/Delete
+            if (isCustom) {
+                const actionsDiv = document.querySelector("#custom-actions");
+                actionsDiv?.classList.remove("hidden");
+
+                // Configurer le lien de modification vers /ingredients/add avec le paramètre ?edit=
+                const editBtn = document.querySelector("#edit-btn");
+                if (editBtn) editBtn.href = `/ingredients/add?edit=${currentHandle}`;
+
+                // Configurer le bouton de suppression
+                const deleteBtn = document.querySelector("#delete-btn");
+                deleteBtn?.addEventListener("click", () => {
+                    if (confirm(`Es-tu sûr de vouloir supprimer l'ingrédient "${ingredient.nom}" ?`)) {
+                        // On filtre en éliminant l'ID ou le handle correspondant
+                        const updatedIngredients = customIngredients.filter(i => i.id !== currentHandle && i.handle !== currentHandle);
+                        localStorage.setItem("custom_ingredients", JSON.stringify(updatedIngredients));
+                        window.location.href = "/ingredients"; // Redirection vers la liste ordonnée
+                    }
+                });
+            }
+
+            ingredientContentDiv?.classList.remove("hidden");
+        } else {
+            errorContentDiv?.classList.remove("hidden");
+        }
+    }
+</script>
