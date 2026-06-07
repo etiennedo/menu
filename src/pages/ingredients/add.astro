@@ -5,7 +5,7 @@ import sections from '../../data/sections.json';
 
 <Layout>
     <div class="nav-links">
-        <a href="/ingredients">← Retour aux ingrédients</a>
+        <a href="/menu/ingredients">← Retour aux ingrédients</a>
     </div>
 
     <h1 id="page-title">Ajouter un ingrédient</h1>
@@ -166,6 +166,6 @@ import sections from '../../data/sections.json';
         localStorage.setItem("custom_ingredients", JSON.stringify(customIngredients));
 
         // 5. Redirection vers la page de visualisation de l'ingrédient avec son ID/Handle
-        window.location.href = `/ingredients/view?handle=${finalId}`;
+        window.location.href = `/menu/ingredients/view?handle=${finalId}`;
     });
 </script>

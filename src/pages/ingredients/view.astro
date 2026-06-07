@@ -6,7 +6,7 @@ import sections from '../../data/sections.json';
 
 <Layout>
     <div class="nav-links">
-        <a href="/ingredients">← Retour aux ingrédients</a>
+        <a href="/menu/ingredients">← Retour aux ingrédients</a>
     </div>
 
     <div id="ingredient-content" class="hidden">
@@ -111,7 +111,7 @@ import sections from '../../data/sections.json';
 
                 // Configurer le lien de modification vers /ingredients/add avec le paramètre ?edit=
                 const editBtn = document.querySelector("#edit-btn");
-                if (editBtn) editBtn.href = `/ingredients/add?edit=${currentHandle}`;
+                if (editBtn) editBtn.href = `/menu/ingredients/add?edit=${currentHandle}`;
 
                 // Configurer le bouton de suppression
                 const deleteBtn = document.querySelector("#delete-btn");
@@ -120,7 +120,7 @@ import sections from '../../data/sections.json';
                         // On filtre en éliminant l'ID ou le handle correspondant
                         const updatedIngredients = customIngredients.filter(i => i.id !== currentHandle && i.handle !== currentHandle);
                         localStorage.setItem("custom_ingredients", JSON.stringify(updatedIngredients));
-                        window.location.href = "/ingredients"; // Redirection vers la liste ordonnée
+                        window.location.href = "/menu/ingredients"; // Redirection vers la liste ordonnée
                     }
                 });
             }

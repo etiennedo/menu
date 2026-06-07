@@ -6,11 +6,11 @@ import sections from '../../data/sections.json';
 
 <Layout>
     <div class="nav-links">
-        <a href="/">← Retour à l'accueil</a>
+        <a href="/menu">← Retour à l'accueil</a>
     </div>
     <h1>Ingrédients par rayon</h1>
 
-    <a href="/ingredients/add" class="btn-add">Ajouter un ingrédient</a>
+    <a href="/menu/ingredients/add" class="btn-add">Ajouter un ingrédient</a>
 
     {sections.map((section) => {
         // Filtrer les ingrédients statiques (JSON) qui appartiennent à cette section
@@ -29,7 +29,7 @@ import sections from '../../data/sections.json';
                         {sectionIngredients.map((ingredient) => (
                             <tr>
                                 <td>
-                                    <a href={`/ingredients/view?handle=${ingredient.handle}`}>
+                                    <a href={`/menu/ingredients/view?handle=${ingredient.handle}`}>
                                         {ingredient.nom}
                                     </a>
                                 </td>
@@ -107,7 +107,7 @@ import sections from '../../data/sections.json';
             const rowHtml = `
                 <tr class="custom-ingredient-row">
                     <td>
-                        <a href="/ingredients/view?handle=${ingredientId}">⭐ ${ingredient.nom}</a>
+                        <a href="/menu/ingredients/view?handle=${ingredientId}">⭐ ${ingredient.nom}</a>
                     </td>
                 </tr>
             `;
